@@ -16,10 +16,12 @@ app.use(express.urlencoded({ extended: false }));
 const mainRouter = require('./routes'); // /index.js 생략 가능
 const userRouter = require('./routes/users'); // .js 생략 가능
 const boardRouter = require('./routes/board');
+const dbRouter = require('./routes/db');
 
 app.use('/', mainRouter); // 이 주소로 들어오는 애들은 모두 mainRouter 가 처리한다
 app.use('/users', userRouter); // /users 주소로 들어오면 이 라우터가 처리
 app.use('/board', boardRouter);
+app.use('/db', dbRouter);
 
 // 에러 출력. 4개 인자를 모두 작성해야.
 app.use((err, req, res, next) => {
