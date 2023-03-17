@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쿠키</title>
+</head>
+
+<body>
+  <h1>쿠키 팔아요!</h1>
+  <input type="checkbox" name="check" id="check" />
+  <label for="check">ALERT 하루동안 보지 않기!</label>
+
+  <script>
+    if (!document.cookie) alert('쿠키 팔아요!');
+
+    const checkBox = document.getElementById('check');
+
+    // // 프로미스 체인 방식으로 catch 함수 구현
+    // checkBox.addEventListener('click', () => {
+    //   if (checkBox.checked) {
+    //     fetch(`/cookie/cook`, {
+    //       method: 'GET',
+
+    //       // 이 부분 코드 없어도 전달은 되지만, 작성.
+    //       headers: {
+    //         'Content-type': 'application/json',
+    //       }
+    //     }).then((res) => {
+    //       // 통신의 결과를 res 로 받음.
+    //       console.log('Response', res);
+    //       return res.json(); // 보낸 메시지를 받기
+    //     }).then((msg) => {
+    //       // res.json(); 의 결과값을 msg 로 받음.
+    //       console.log('Message', msg);
+    //     })
+    //   }
+    // });
+
+    // async, await 방식
+    checkBox.addEventListener('click', async () => {
+      if (checkBox.checked) {
+        const res = await fetch(`/cookie/cook`, {
+          method: 'GET',
+          headers: {
+            'Content-type': 'application/json',
+          }
+        });
+
+        console.log(res);
+        const msg = await res.json();
+        console.log(msg);
+      }
+    });
+  </script>
+</body>
+
+</html>
