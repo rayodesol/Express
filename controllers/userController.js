@@ -4,7 +4,7 @@ const connection = require('./dbConnect');
 const userDB = {
   // 회원 정보를 모두 가져다 주는. 쓰임을 위해 함수로 정의한 것.
   getUsers: (cb) => {
-    // 인자가 에러, 데이터 순으로 들어감.
+    // 데이터 가져오는 것도 시간이 걸리니 에러 처리. 인자가 에러, 데이터 순으로 들어감.
     connection.query('SELECT * FROM mydb.user;', (err, data) => {
       if (err) throw err;
       console.log(data);

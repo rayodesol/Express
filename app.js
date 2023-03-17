@@ -1,5 +1,6 @@
 const express = require('express'); // commonJS 방식
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 // 중요한 내용 부분
 const app = express(); // express 프레임워크를 실행시켜 저장
@@ -11,17 +12,22 @@ app.set('view engine', 'ejs'); // 뷰 엔진 적용
 app.use(express.static('public')); // public 이란 폴더를 static 폴더로 만듦
 app.use(express.json()); // 라우터 위에 쓰기!! bodyParser 는 옛날 것! express 로 쓰기!
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser()); // 쿠키를 만들어 브라우저에 뿌릴 수 있게 됨.
 
 // 라우터 설정 부분
 const mainRouter = require('./routes'); // /index.js 생략 가능
 const userRouter = require('./routes/users'); // .js 생략 가능
 const boardRouter = require('./routes/board');
 const dbRouter = require('./routes/db');
+const dbBoardRouter = require('./routes/dbBoard');
+const cookieRouter = require('./routes/cookie');
 
 app.use('/', mainRouter); // 이 주소로 들어오는 애들은 모두 mainRouter 가 처리한다
 app.use('/users', userRouter); // /users 주소로 들어오면 이 라우터가 처리
 app.use('/board', boardRouter);
 app.use('/db', dbRouter);
+app.use('/dbBoard', dbBoardRouter);
+app.use('/cookie', cookieRouter);
 
 // 에러 출력. 4개 인자를 모두 작성해야.
 app.use((err, req, res, next) => {
