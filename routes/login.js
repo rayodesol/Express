@@ -13,8 +13,17 @@ router.post('/', (req, res) => {
     // 아이디 값이 UNIQUE 이므로 1개일 수 밖에
     if (data.length === 1) {
       if (data[0].PASSWORD === req.body.password) {
+        // 백엔드 세션 생성
         req.session.login = true;
         req.session.userId = req.body.id;
+
+        // 로그인 쿠키 발행
+        res.cookie('user', req.body.id, {
+          maxAge: 1000 * 30, // 쿠키 30초 유지
+          httpOnly: true,
+          signed: true, // 쿠키 데이터가 암호화돼서 저장
+        });
+
         res.status(200);
         res.redirect('/dbBoard');
       } else {
@@ -40,6 +49,7 @@ router.post('/', (req, res) => {
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) throw err;
+    res.clearCookie('user'); // 로그아웃하면 쿠키가 사라져 게시판 접속 못함.
     res.redirect('/'); // localhost:4000 으로 리다이렉트
   });
 });

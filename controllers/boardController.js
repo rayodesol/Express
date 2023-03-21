@@ -15,7 +15,7 @@ const boardDB = {
   writeArticle: (newArticle, cb) => {
     // 벡틱에서 Enter 치면 개행문자가 들어감
     connection.query(
-      `INSERT INTO mydb.board (TITLE, CONTENT) values ('${newArticle.title}', '${newArticle.content}');`,
+      `INSERT INTO mydb.board (USERID, TITLE, CONTENT) values ('${newArticle.userId}', '${newArticle.title}', '${newArticle.content}');`,
       (err, data) => {
         if (err) throw err;
         cb(data);

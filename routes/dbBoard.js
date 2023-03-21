@@ -5,7 +5,8 @@ const router = express.Router();
 
 // 로그인 확인용 미들웨어
 function isLogin(req, res, next) {
-  if (req.session.login) {
+  if (req.session.login || req.signedCookies.user) {
+    console.log('사인드 쿠키', req.signedCookies.user);
     next();
   } else {
     res.status(400);
@@ -47,9 +48,15 @@ router.get('/write', isLogin, (req, res) => {
 
 // 데이터베이스에 글쓰기
 router.post('/write', isLogin, (req, res) => {
+  // USERID --> req.session.userId 에 구현해둠.
   if (req.body.title && req.body.content) {
-    boardDB.writeArticle(req.body, (data) => {
-      console.log(data);
+    const newArticle = {
+      userId: req.session.userId,
+      title: req.body.title,
+      content: req.body.content,
+    };
+    boardDB.writeArticle(newArticle, (data) => {
+      // console.log(data);
       // 쿼리 성공여부 판단
       if (data.affectedRows >= 1) {
         res.redirect('/dbBoard');

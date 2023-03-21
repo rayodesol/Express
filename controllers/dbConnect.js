@@ -4,10 +4,10 @@ const mysql = require('mysql');
 
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'root', // 아이디를 따로 만들었다면 그 아이디로
-  password: '12345678',
+  user: process.env.MYSQL_USER, // 아이디를 따로 만들었다면 그 아이디로
+  password: process.env.MYSQL_PASSWORD,
   port: '3306',
-  database: 'mydb',
+  database: process.env.MYSQL_DB,
 });
 
 // 실행
