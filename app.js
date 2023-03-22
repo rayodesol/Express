@@ -49,6 +49,7 @@ app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 
 // 에러 출력. 4개 인자를 모두 작성해야.
+// 매개변수에 next 없으면 에러 받아 올 수 없음.
 app.use((err, req, res, next) => {
   console.log(err.stack);
   res.status(err.statusCode);

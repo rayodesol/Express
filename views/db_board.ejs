@@ -141,8 +141,8 @@
             </div>
             <div class="foot">
               <% if (ARTICLE[i].USERID === userId) { %>
-              <a class="btn orange" href="/dbBoard/modify/<%= ARTICLE[i].ID_PK %>">수정</a>
-              <a class="btn blue" href="#" onclick="deleteArticle('<%= ARTICLE[i].ID_PK %>')">삭제</a>
+              <a class="btn orange" href="/dbBoard/modify/<%= ARTICLE[i]._id %>">수정</a>
+              <a class="btn blue" href="#" onclick="deleteArticle('<%= ARTICLE[i]._id %>')">삭제</a>
               <% } %>
             </div>
           </li>
@@ -157,16 +157,42 @@
   </div>
 
   <script>
-    function deleteArticle(id) {
-      // fetch 함수로 요청 보내기. 요청이 dbBoard.js 의 미들웨어로 날아감.
-      fetch(`http://localhost:4000/dbBoard/delete/${id}`, {
-        method: 'delete',
-        headers: {
-          'Content-type': 'application/json',
-        }
-      }).then((res) => {
-        if (res.status === 200) location.reload();
+    async function deleteArticle(id) {
+      // async, await 로 구현!!!
+      // then 으로 받아야 될 것을 await 걸고 변수로 받는 것.
+      const res = await fetch(`/dbBoard/delete/${id}`, {
+        method: 'DELETE'
       })
+
+      console.log(res);
+
+      // 에러가 나오는 상황을 먼저 예외 처리해서 depth 줄이기.
+      if (res.status !== 200) return alert('통신 실패')
+
+      const msg = await res.json();
+      console.log(msg);
+      location.reload();
+
+
+      // // 프로미스 체이닝 형태!!!
+      // // fetch 함수로 요청 보내기. 요청이 dbBoard.js 의 미들웨어로 날아감.
+      // fetch(`http://localhost:4000/dbBoard/delete/${id}`, {
+      //   method: 'delete',
+      //   headers: {
+      //     // rea.body 에 담긴 것이 json 형태라는 것.
+      //     'Content-type': 'application/json',
+      //   }
+      // }).then((res) => {
+      //   // if (res.status === 200) location.reload();
+
+      //   // res 에서 전달받은 json 형태 데이터 출력
+      //   console.log('RESPONSE', res);
+      //   return res.json(); // 시간이 필요한 작업.
+      // }).then((msg) => {
+      //   // 프로미스 체인 형태로.
+      //   console.log('MSG', msg);
+      //   location.reload();
+      // })
     }
   </script>
 </body>
