@@ -1,5 +1,9 @@
 const express = require('express');
 // const boardDB = require('../controllers/boardController'); // 컨트롤러 불러오기
+
+const multer = require('multer');
+const fs = require('fs');
+
 const {
   getAllArticles,
   writeArticle,
@@ -9,6 +13,29 @@ const {
 } = require('../controllers/boardController');
 
 const router = express.Router();
+
+// 파일 업로드 설정
+// 저장할 위치 안내하는 변수 설정.
+const dir = './uploads'; // 노드js 가 하기 때문에 상대경로로 써야.
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // upload 폴더에 저장하겠다
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    // 파일명 지정
+    // ejs에서의 name 을 씀.
+    cb(null, file.fieldname + '_' + Date.now());
+  },
+});
+const limits = {
+  fileSize: 1024 * 1024 * 2, // 2MB 까지 업로드 가능.
+};
+
+const upload = multer({ storage, limits });
+
+// 라우터가 읽어질 때, dir 폴더가 없으면 폴더 생성.
+if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
 // 로그인 확인용 미들웨어
 function isLogin(req, res, next) {
@@ -36,7 +63,7 @@ router.get('/write', (req, res) => {
 });
 
 // 글쓰기
-router.post('/write', isLogin, writeArticle);
+router.post('/write', isLogin, upload.single('img'), writeArticle);
 
 // 글 수정 모드로 이동
 // 주소 앞에 dbBoard/ 가 있는 상태
@@ -44,7 +71,7 @@ router.post('/write', isLogin, writeArticle);
 router.get('/modify/:id', isLogin, getArticle);
 
 // 글 수정
-router.post('/modify/:id', isLogin, modifyArticle);
+router.post('/modify/:id', isLogin, upload.single('img'), modifyArticle);
 
 // 글 삭제
 router.delete('/delete/:id', isLogin, deleteArticle);

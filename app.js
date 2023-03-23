@@ -12,6 +12,7 @@ const { PORT } = process.env; // 포트번호 지정. 3000번대는 react와 겹
 app.use(cors()); // cors 패키지를 쓰라는.
 app.set('view engine', 'ejs'); // 뷰 엔진 적용
 app.use(express.static('public')); // public 이란 폴더를 static 폴더로 만듦
+app.use('/uploads', express.static('uploads'));
 app.use(express.json()); // 라우터 위에 쓰기!! bodyParser 는 옛날 것! express 로 쓰기!
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('cielo')); // 쿠키를 만들어 브라우저에 뿌릴 수 있게 됨.

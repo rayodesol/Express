@@ -14,12 +14,13 @@ const UNEXPECTED_MSG = '<br><a href="/">메인 페이지로 이동</a>';
 const getAllArticles = async (req, res) => {
   try {
     // mongoDB 에 접속.
-    const client = await mongoClient.connect();
-    const board = client.db('kdt5').collection('board');
+    const client = await mongoClient.connect(); // DB 접근.
+    const board = client.db('kdt5').collection('board'); // 컬렉션에 접근.
 
     const allArticleCursor = board.find({}); // 데이터 가리키기..?
     const ARTICLE = await allArticleCursor.toArray();
 
+    // 원래는 라우터가 했던 부분을 여기서!
     res.render('db_board', {
       // 객체 안에 담아 데이터 보내기
       ARTICLE,
@@ -38,11 +39,14 @@ const writeArticle = async (req, res) => {
     const client = await mongoClient.connect();
     const board = client.db('kdt5').collection('board');
 
+    console.log(req.file); // 업로드 마친 후 찍어지는 코드.
+
     // mySQL 과 혼용...?
     const newArticle = {
       USERID: req.session.userId, // req.body 못 받아서 req.session 으로 처리...?
       TITLE: req.body.title,
       CONTENT: req.body.content,
+      IMAGE: req.file ? req.file.filename : null, // 이미지 업로드 안 하면 null 값 들어가도록.
     };
     await board.insertOne(newArticle);
     res.redirect('/dbBoard');
@@ -77,11 +81,20 @@ const modifyArticle = async (req, res) => {
     const client = await mongoClient.connect();
     const board = client.db('kdt5').collection('board');
 
+    console.log(req.file); // 수정한 이미지 들어오는 거 확인
+
+    // 수정할 객체 만들기
+    const modify = {
+      TITLE: req.body.title,
+      CONTENT: req.body.content,
+    };
+
+    // 이미지가 들어오면 수정할 객체 수정
+    if (req.file) modify.IMAGE = req.file.filename;
+
     // 무조건 유니크한 값으로 찾아야 -> _id 값을 찾아야.
-    await board.updateOne(
-      { _id: ObjectId(req.params.id) },
-      { $set: { TITLE: req.body.title, CONTENT: req.body.content } },
-    );
+    await board.updateOne({ _id: ObjectId(req.params.id) }, { $set: modify });
+
     // 결과 보내기
     res.status(200);
     res.redirect('/dbBoard');
@@ -100,7 +113,7 @@ const deleteArticle = async (req, res) => {
 
     // ejs 에서 파라미터 값으로 전달하기 때문에 req.params.id
     await board.deleteOne({ _id: ObjectId(req.params.id) });
-    res.status(200).json('삭제 성공');
+    res.status(200).json('삭제 성공'); // 페이지 리로드는 프론트에서 하고 메시지만 보내주기.
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message + UNEXPECTED_MSG);
